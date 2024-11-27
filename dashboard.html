@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Aquaponics</title>
+
+    <link rel="icon" type="image/png" href="images/logo.png" />
+
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+    ></script>
+
+    <!--SWEETALERT-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.21.0/dist/tf.min.js"></script>
+
+    <!--lottie for loading and animetions-->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <script src="js/hourly.js"></script>
+    <script src="js/temp.js"></script>
+
+    <!--BOXICONS ICONS-->
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <!-- Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+      rel="stylesheet"
+    />
+
+    <!--font alexandria-->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/combine.css" />
+    <link rel="stylesheet" href="css/visual.css" />
+    <link rel="stylesheet" href="css/hourly.css" />
+    <link rel="stylesheet" href="css/loadingscreen.css" />
+
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+
+    <script src="responsive.min.js"></script>
+
+    <script>
+      // Firebase configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyDvwBcGp3ZWS8EwLUINIsHVu8NHKRWAnHA",
+        authDomain: "ph-temp-data.firebaseapp.com",
+        databaseURL:
+          "https://ph-temp-data-default-rtdb.asia-southeast1.firebasedatabase.app/",
+        projectId: "ph-temp-data",
+        storageBucket: "ph-temp-data.appspot.com",
+        messagingSenderId: "933744110311",
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+
+      // Reference to your pH value in the Firebase database
+      const phRef = database.ref("/pH_readings");
+
+      // Display the most recent pH value in the HTML
+      phRef.limitToLast(1).on("child_added", (snapshot) => {
+        const pHValue = snapshot.val();
+        document.getElementById("current-pH-level").innerText = `${pHValue}`;
+      });
+
+      // Get the second-to-last pH reading
+      phRef.limitToLast(2).on("value", (snapshot) => {
+        let readings = [];
+        snapshot.forEach((childSnapshot) => {
+          readings.push(childSnapshot.val());
+        });
+        if (readings.length === 2) {
+          document.getElementById(
+            "previous-ph"
+          ).innerText = `${readings[0]} pH`;
+        }
+      });
+
+      // Reference to your temperature values in Firebase
+      const tempRef = database.ref("/temperature_readings");
+
+      // Display the most recent temperature value in the HTML
+      tempRef.limitToLast(1).on("child_added", (snapshot) => {
+        const tempValue = snapshot.val();
+        document.getElementById(
+          "current-temperature"
+        ).innerText = `${tempValue} °C`;
+      });
+
+      // Get the second-to-last temperature reading
+      tempRef.limitToLast(2).on("value", (snapshot) => {
+        let readings = [];
+        snapshot.forEach((childSnapshot) => {
+          readings.push(childSnapshot.val());
+        });
+        if (readings.length === 2) {
+          document.getElementById(
+            "previous-temp"
+          ).innerText = `${readings[0]} °C`;
+        }
+      });
+
+      am5.ready(function () {
+        var root = am5.Root.new("chartdiv");
+
+        root.setThemes([am5themes_Animated.new(root)]);
+
+        var chart = root.container.children.push(
+          am5radar.RadarChart.new(root, {
+            panX: false,
+            panY: false,
+            startAngle: 160,
+            endAngle: 380,
+          })
+        );
+
+        var axisRenderer = am5radar.AxisRendererCircular.new(root, {
+          innerRadius: -40,
+        });
+
+        axisRenderer.grid.template.setAll({
+          stroke: root.interfaceColors.get("background"),
+          visible: false,
+          strokeOpacity: 0.8,
+        });
+
+        var xAxis = chart.xAxes.push(
+          am5xy.ValueAxis.new(root, {
+            maxDeviation: 0,
+            min: 1,
+            max: 14,
+            strictMinMax: true,
+            renderer: axisRenderer,
+          })
+        );
+
+        var axisDataItem = xAxis.makeDataItem({});
+
+        var clockHand = am5radar.ClockHand.new(root, {
+          pinRadius: am5.percent(20),
+          radius: am5.percent(75),
+          bottomWidth: 40,
+        });
+
+        var bullet = axisDataItem.set(
+          "bullet",
+          am5xy.AxisBullet.new(root, {
+            sprite: clockHand,
+          })
+        );
+
+        xAxis.createAxisRange(axisDataItem);
+
+        var label = chart.radarContainer.children.push(
+          am5.Label.new(root, {
+            fill: am5.color(0xffffff),
+            centerX: am5.percent(50),
+            textAlign: "center",
+            centerY: am5.percent(50),
+            fontSize: "3em",
+          })
+        );
+
+        axisDataItem.set("value", 7);
+        bullet.get("sprite").on("rotation", function () {
+          var value = axisDataItem.get("value");
+          var fill = am5.color(0x000000);
+          xAxis.axisRanges.each(function (axisRange) {
+            if (
+              value >= axisRange.get("value") &&
+              value <= axisRange.get("endValue")
+            ) {
+              fill = axisRange.get("axisFill").get("fill");
+            }
+          });
+
+          label.set("text", Math.round(value).toString());
+
+          clockHand.pin.animate({
+            key: "fill",
+            to: fill,
+            duration: 500,
+            easing: am5.ease.out(am5.ease.cubic),
+          });
+          clockHand.hand.animate({
+            key: "fill",
+            to: fill,
+            duration: 500,
+            easing: am5.ease.out(am5.ease.cubic),
+          });
+        });
+
+        chart.bulletsContainer.set("mask", undefined);
+
+        var bandsData = [
+          {
+            title: "Acidic",
+            color: "#ff2c2c",
+            lowScore: 1,
+            highScore: 5,
+          },
+          {
+            title: "Neutral",
+            color: "#5bb450",
+            lowScore: 5,
+            highScore: 8,
+          },
+          {
+            title: "Alkalinity",
+            color: "#3f1651",
+            lowScore: 8,
+            highScore: 14,
+          },
+        ];
+
+        am5.array.each(bandsData, function (data) {
+          var axisRange = xAxis.createAxisRange(xAxis.makeDataItem({}));
+
+          axisRange.setAll({
+            value: data.lowScore,
+            endValue: data.highScore,
+          });
+
+          axisRange.get("axisFill").setAll({
+            visible: true,
+            fill: am5.color(data.color),
+            fillOpacity: 0.8,
+          });
+
+          axisRange.get("label").setAll({
+            text: data.title,
+            inside: true,
+            radius: 15,
+            fontSize: "0.9em",
+            fill: root.interfaceColors.get("background"),
+          });
+        });
+
+        chart.appear(1000, 100);
+
+        // Get the current pH value and update the radar chart
+        phRef.limitToLast(1).on("child_added", function (snapshot) {
+          const pHValue = snapshot.val();
+
+          // Update the radar chart value
+          axisDataItem.animate({
+            key: "value",
+            to: pHValue,
+            duration: 500,
+            easing: am5.ease.out(am5.ease.cubic),
+          });
+
+          // Update the label text based on the pH value
+          let pHLabel = "";
+
+          if (pHValue >= 1 && pHValue < 5) {
+            pHLabel = "Acidic";
+          } else if (pHValue >= 5 && pHValue <= 8) {
+            pHLabel = "Neutral";
+          } else if (pHValue > 8 && pHValue <= 14) {
+            pHLabel = "Alkaline";
+          }
+
+          label.set("text", pHLabel); // Update label to show range title
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <!--for loading screen-->
+    <div id="loading-screen">
+      <lottie-player
+        src="https://lottie.host/b89a07af-1290-473a-9f99-f7e54b1605a1/HhfnziTiTw.json"
+        background="transparent"
+        speed="1"
+        loop
+        autoplay
+      >
+      </lottie-player>
+
+      <!-- Script for loading screen -->
+      <script>
+        // Hide the loading screen once the page is fully loaded
+        window.addEventListener("load", function () {
+          const loadingScreen = document.getElementById("loading-screen");
+          loadingScreen.style.display = "none";
+        });
+      </script>
+    </div>
+
+    <div class="grid-container">
+      <header class="header">
+        <div class="menu-icon" onclick="openSidebar()">
+          <span class="material-icons-outlined">menu</span>
+        </div>
+        <div class="header-left"></div>
+        <div class="header-right">
+          <span
+            class="material-icons-outlined"
+            id="notification-icon"
+            onclick="toggleNotifications()"
+          >
+            notifications
+            <span id="notification-count" class="badge" style="display: none"
+              >0</span
+            >
+          </span>
+        </div>
+      </header>
+      <div id="notification-dropdown" class="notification-dropdown hidden">
+        <div class="notification-header">
+          <button onclick="markAllAsRead()">Mark all as read</button>
+        </div>
+        <ul id="notification-list"></ul>
+      </div>
+
+      <!--sidebar-->
+      <aside id="sidebar">
+        <div class="sidebar-title">
+          <div class="sidebar-brand">
+            <span class="material-icons-outlined"></span> Aquaponics
+          </div>
+          <span class="material-icons-outlined" onclick="closeSidebar()"
+            >close</span
+          >
+        </div>
+
+        <ul class="sidebar-list">
+          <li class="sidebar-list-item active">
+            <a href="dashboard.html">
+              <span class="material-icons-outlined">dashboard</span> Dashboard
+            </a>
+          </li>
+
+          <li class="sidebar-list-item">
+            <a href="report.html">
+              <span class="material-icons-outlined">poll</span> Logs
+            </a>
+          </li>
+
+          <li class="sidebar-list-item">
+            <a href="#" onclick="confirmLogout(event)">
+              <span class="material-icons-outlined">logout</span> Logout
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <!--Main container of all dash-info-->
+      <main class="main-container">
+        <!--heading-->
+        <div class="main-title">
+          <p class="font-weight-bold">Dashboard</p>
+        </div>
+
+        <!--1st section: realtime-data information -->
+        <div class="main-data-container">
+          <!--realtime data for ph-->
+          <div class="realtime-container">
+            <div class="head-name">
+              <p>Current pH Level</p>
+            </div>
+
+            <div class="container-all">
+              <div class="content-realtime">
+                <div class="icon">
+                  <i class="bx bxs-droplet"></i>
+                </div>
+
+                <div class="data-value">
+                  <h3>pH Level</h3>
+                  <h2 id="current-pH-level">7.0 pH</h2>
+                </div>
+              </div>
+
+              <div class="meter" id="chartdiv"></div>
+            </div>
+          </div>
+
+          <!--realtime data for temperature-->
+          <div class="realtime-container">
+            <div class="head-name">
+              <p>Current Temperature</p>
+            </div>
+
+            <div class="container-all">
+              <div class="content-realtime">
+                <div class="icon">
+                  <i class="bx bxs-thermometer"></i>
+                </div>
+
+                <div class="data-value">
+                  <h3>Temperature</h3>
+                  <h2 id="current-temperature">30 °C</h2>
+                </div>
+              </div>
+
+              <div id="termometer">
+                <div id="temperature" style="height: 0" data-value="0°C"></div>
+                <div id="graduations"></div>
+              </div>
+            </div>
+          </div>
+
+          <!--card that contains the current date and the prevoius temp and ph-->
+          <div class="third-card-info">
+            <div class="date-info">
+              <h1 id="time">sample: 3:00 PM</h1>
+              <h2 id="date">sample: January 12, 2024</h2>
+              <h2 id="day">sample: Wednesday</h2>
+            </div>
+
+            <!--script for getting the current day and time -->
+            <script>
+              function updateDateTime() {
+                const now = new Date();
+
+                // Format time
+                let hours = now.getHours();
+                const minutes = now.getMinutes().toString().padStart(2, "0");
+                const ampm = hours >= 12 ? "PM" : "AM";
+                hours = hours % 12 || 12; // Convert to 12-hour format
+                const time = `${hours}:${minutes} ${ampm}`;
+
+                // Format date
+                const options = {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                };
+                const date = now.toLocaleDateString("en-US", options);
+
+                // Get day
+                const day = now.toLocaleDateString("en-US", {
+                  weekday: "long",
+                });
+
+                // Update elements
+                document.getElementById("time").textContent = time;
+                document.getElementById("date").textContent = date;
+                document.getElementById("day").textContent = day;
+              }
+
+              // Update every second
+              setInterval(updateDateTime, 1000);
+
+              // Initial call
+              updateDateTime();
+            </script>
+
+            <!--previous ph card-->
+            <div class="previous-ph">
+              <h3>Previous pH Reading</h3>
+              <h2 id="previous-ph">8.0 pH</h2>
+            </div>
+
+            <!--previous temp card-->
+            <div class="previous-temp">
+              <h3>Previous Temperature Reading</h3>
+              <h2 id="previous-temp">30 °C</h2>
+            </div>
+          </div>
+        </div>
+
+        <!-- HOURLY FORECASE-->
+        <div class="forecast-container">
+          <div class="forecast-header">
+            <h3>Hourly Prediction Forecast</h3>
+          </div>
+          <div id="forecast" class="forecast">
+            <!-- JavaScript will dynamically add hourly pH items here --->
+          </div>
+          <!-- Buttons for scrolling placed below the forecast -->
+          <div class="scroll-buttons">
+            <button class="scroll-button prev">
+              <i class="bx bx-fast-forward-circle flip-horizontal"></i>
+              <!-- Previous arrow icon -->
+            </button>
+            <i class="bx bx-dots-horizontal-rounded"></i>
+            <button class="scroll-button next">
+              <i class="bx bx-fast-forward-circle"></i
+              ><!-- Next arrow icon -->
+            </button>
+          </div>
+
+          <!--script for buttons, prev and next-->
+          <script>
+            // Get buttons
+            const prevButton = document.querySelector(".scroll-button.prev");
+            const nextButton = document.querySelector(".scroll-button.next");
+
+            // Get the forecast container (or any other element you want to scroll)
+            const forecastContainer = document.getElementById("forecast");
+
+            // Add click event listeners for prev and next buttons
+            prevButton.addEventListener("click", () => {
+              forecastContainer.scrollBy({
+                left: -200, // Scroll left by 200px, you can adjust this as per your requirement
+                behavior: "smooth", // Smooth scrolling
+              });
+            });
+
+            nextButton.addEventListener("click", () => {
+              forecastContainer.scrollBy({
+                left: 200, // Scroll right by 200px, you can adjust this as per your requirement
+                behavior: "smooth", // Smooth scrolling
+              });
+            });
+          </script>
+        </div>
+
+        <!--FOR CHARTS-->
+
+        <!--BAR CHART-->
+        <div class="charts">
+          <div class="charts-card">
+            <p class="chart-title">Data</p>
+            <div id="bar-chart"></div>
+          </div>
+
+          <!--AREA CHART-->
+          <!-- <div class="charts-card">
+            <p class="chart-title">pH Level & Temperarture</p>
+            <div id="area-chart"></div>
+          </div> -->
+        </div>
+      </main>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <script>
+      // Email Notification Configurations
+      (function () {
+        emailjs.init("6FCj6py9nGf4b1PQA ---"); // Replace with your EmailJS user ID
+      })();
+
+      // const notificationInterval = 3 * 60 * 60 * 1000;
+      const notificationInterval = 1 * 60 * 60 * 1000; // 1 hour
+
+
+      let lastNotificationTime = 0;
+
+      // Function to send email notification using SendGrid
+      // Retrieve userEmail from localStorage
+      const userEmail = localStorage.getItem("userEmail");
+      console.log(userEmail);
+
+      // Function to send email notification
+      function sendEmailNotification(userEmail, message) {
+        emailjs
+          .send("service_edxaqsg ---", "template_h0vp649 ---", {
+            to_email: userEmail,
+            message: message,
+          })
+          .then((response) => {
+            console.log(
+              "Email sent successfully!",
+              response.status,
+              response.text
+            );
+          })
+          .catch((error) => {
+            console.error("Error sending email:", error);
+          });
+      }
+
+      // Updated receiveNotification function to use email notifications
+      function receiveNotification(message) {
+        notifications.push({
+          message: message,
+          unread: true,
+        });
+        unreadCount++;
+        updateNotificationCount();
+        displayNotifications();
+
+        // Send an email if the user is logged in
+        if (userEmail) {
+          sendEmailNotification(userEmail, message);
+        }
+      }
+
+      const minPH = 5.5; // Set the minimum acceptable pH level
+      const maxPH = 7.5; // Set the maximum acceptable pH level
+
+      // Monitor pH levels and send notifications if out of range
+      function checkPHLevel() {
+        const pHLevelElement = document.getElementById("current-pH-level");
+        const pHLevel = parseFloat(pHLevelElement.textContent);
+
+        if (pHLevel < minPH || pHLevel > maxPH) {
+          const currentTime = Date.now();
+          if (currentTime - lastNotificationTime >= notificationInterval) {
+            lastNotificationTime = currentTime;
+            const UImessage = `Warning: pH level is out of the acceptable range! Current pH: ${pHLevel}`;
+            receiveNotification(UImessage);
+          }
+        }
+      }
+
+      // Simulate receiving a UI notification
+      function receiveSystemNotification(message) {
+        notifications.push({ message: message, unread: true });
+        unreadCount++;
+        updateNotificationCount();
+        displayNotifications();
+        localStorage.setItem("notifications", JSON.stringify(notifications)); // Store in localStorage
+      }
+
+      // Initialize interval to check pH levels
+      setInterval(checkPHLevel, notificationInterval);
+
+      function confirmLogout(event) {
+        event.preventDefault(); // Prevent the default link action
+
+        Swal.fire({
+          title: "Are you sure?",
+          text: "Do you really want to logout?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#236476",
+          cancelButtonColor: "#142F40",
+          confirmButtonText: "Yes, logout",
+          cancelButtonText: "Cancel",
+          customClass: {
+            container: "swal2-container",
+            popup: "swal2-popup",
+          },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Log the user out and redirect to the index.html page
+            localStorage.removeItem("userEmail"); // Clear user data if needed
+            window.location.href = "index.html"; // Redirect to the index page
+          }
+        });
+      }
+    </script>
+
+    <script src="js/notif.js"></script>
+
+    <!-- Scripts -->
+    <!-- ApexCharts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.3/apexcharts.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/script.js"></script>
+  </body>
+</html>

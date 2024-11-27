@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Aquaponics</title>
+
+    <link rel="icon" type="image/png" href="images/logo.png">
+
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+    ></script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.21.0/dist/tf.min.js"></script>
+
+    <script src="js/hourly.js"></script>
+    <script src="js/temp.js"></script>
+
+    <!-- Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+      rel="stylesheet"
+    />
+
+    <!--font alexandria-->
+ <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;700&display=swap" rel="stylesheet">
+
+
+    <!-- Custom CSS  -->
+
+    <link rel="stylesheet" href="css/combine.css">
+    <link rel="stylesheet" href="css/report.css">
+    <link rel="stylesheet" href="css/loadingscreen.css">
+
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+
+    <script src="responsive.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables and Buttons CSS & JS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css"
+    />
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+ <!--lottie for loading and animetions-->
+ <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+ 
+
+    <!-- Firebase and other JavaScript code (no changes needed) -->
+  </head>
+  <body>
+
+    <!--for loading screen-->
+    <div id="loading-screen">
+      <lottie-player 
+          src="https://lottie.host/b89a07af-1290-473a-9f99-f7e54b1605a1/HhfnziTiTw.json" 
+          background="transparent" 
+          speed="1" 
+          loop 
+          autoplay>
+      </lottie-player>
+  
+      <script>
+        // Hide the loading screen once the content is fully loaded
+        window.addEventListener('load', function () {
+            const loadingScreen = document.getElementById('loading-screen');
+            loadingScreen.style.display = 'none';  // Hide loading screen
+        });
+    </script>
+  
+  </div>
+    <div class="grid-container">
+      <!-- HEADER -->
+      <header class="header">
+        <div class="menu-icon" onclick="openSidebar()">
+          <span class="material-icons-outlined">menu</span>
+        </div>
+        <div class="header-left"></div>
+        <div class="header-right">
+          <span
+            class="material-icons-outlined"
+            id="notification-icon"
+            onclick="toggleNotifications()"
+          >
+            notifications
+            <span id="notification-count" class="badge" style="display: none"
+              >0</span
+            >
+          </span>
+        </div>
+      </header>
+
+  <!--notificaiton-->
+      <div id="notification-dropdown" class="notification-dropdown hidden">
+        <div class="notification-header">
+          <button onclick="markAllAsRead()">Mark all as read</button>
+        </div>
+        <ul id="notification-list"></ul>
+      </div>
+
+      <!-- SIDEBAR  -->
+      <aside id="sidebar">
+        <div class="sidebar-title">
+          <div class="sidebar-brand">
+            <span class="material-icons-outlined"></span> Aquaponics
+          </div>
+          <span class="material-icons-outlined" onclick="closeSidebar()"
+            >close</span
+          >
+        </div>
+
+        <ul class="sidebar-list">
+          <li class="sidebar-list-item">
+            <a href="dashboard.html" >
+              <span class="material-icons-outlined">dashboard</span> Dashboard
+            </a>
+          </li>
+
+          <li class="sidebar-list-item active">
+            <a href="report.html">
+              <span class="material-icons-outlined">poll</span> Logs
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+  <!--main-container section-->
+      <div class="main-content-holder">
+
+        <!--head title-->
+        <div class="headings">
+          <h1>Real-time pH and Temperature Data</h1>
+      </div>
+      <div class="table-container">
+
+        <div class="search-btns-content">
+          <!-- Search Div -->
+          <div id="search-div" class="search-div">
+              <!-- Search will be dynamically added here -->
+          </div>
+  
+          <!-- Buttons Div -->
+          <div id="buttons-div" class="buttons-div">
+            <h4>Export:</h4>
+              <!-- Buttons will be dynamically added here -->
+          </div>
+        </div>
+          <div class="table-container">
+              <table id="dataTable">
+                  <thead>
+                      <tr>
+                          
+                          <th>pH Level</th>
+                          <th>Temperature (°C)</th>
+                          <th>Date</th>
+                          
+                      </tr>
+                  </thead>
+                  <tbody id="tableBody">
+                      <!-- Data will be populated here -->
+                  </tbody>
+              </table>
+          </div>
+      </div>
+
+      
+<script>
+  $(document).ready(function () {
+    const dataTable = $("#dataTable").DataTable({
+        dom: "lBfrtip",
+        buttons: [
+            {
+                extend: "csv",
+                title: "pH and Temperature Data",
+                className: "btn",
+            },
+            {
+                extend: "excel",
+                title: "pH and Temperature Data",
+                className: "btn",
+            },
+            {
+                extend: "print",
+                title: "pH and Temperature Data",
+                className: "btn",
+            },
+        ],
+        paging: true,
+        pageLength: 10,
+        lengthMenu: [5, 10, 25, 50, 100],
+        ordering: true,
+        bSort: true,
+        stateSave: true,
+        responsive: true,
+        columnDefs: [{ targets: "_all", orderable: true }],
+        scrollY: "400px",
+        scrollCollapse: true,
+    });
+
+    // Move buttons and search to separate containers
+    dataTable
+        .buttons()
+        .container()
+        .appendTo("#buttons-div"); // Append buttons to the buttons div
+    $("#dataTable_filter").appendTo("#search-div"); // Move search bar to the search div
+
+    // Real-time listeners for Firebase pH and temperature readings
+    const phRef = firebase.database().ref("/pH_readings");
+    const tempRef = firebase.database().ref("/temperature_readings");
+
+    const dataStore = {};
+
+    function updateTable(ph, temp) {
+        const currentDateTime = new Date().toLocaleString(); // Generate current date and time
+        dataTable.row.add([ph, temp, currentDateTime]).draw(false); // Add the Date column
+    }
+
+    phRef.on("child_added", function (snapshot) {
+        const key = snapshot.key;
+        const phValue = snapshot.val();
+
+        dataStore[key] = dataStore[key] || {};
+        dataStore[key].ph = phValue;
+
+        if (dataStore[key].temp !== undefined) {
+            updateTable(phValue, dataStore[key].temp);
+            delete dataStore[key];
+        }
+    });
+
+    tempRef.on("child_added", function (snapshot) {
+        const key = snapshot.key;
+        const tempValue = snapshot.val();
+
+        dataStore[key] = dataStore[key] || {};
+        dataStore[key].temp = tempValue;
+
+        if (dataStore[key].ph !== undefined) {
+            updateTable(dataStore[key].ph, tempValue);
+            delete dataStore[key];
+        }
+    });
+});
+
+
+</script>
+
+
+
+
+      <script src="js/script.js"></script>
+     
+
+      <!-- Notification Script -->
+      <script src="js/notif.js"></script>
+    </div>
+  </body>
+</html>

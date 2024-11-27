@@ -1,0 +1,19 @@
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.9);
+    /* Light overlay background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Optionally style the Lottie animation */
+#loading-screen lottie-player {
+    width: 200px;
+    height: 200px;
+}

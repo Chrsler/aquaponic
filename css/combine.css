@@ -1,0 +1,652 @@
+* {
+    font-family: 'Alexandria', sans-serif;
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #e6e8ed;
+    color: #666666;
+    font-family: "Alexandria", sans-serif;
+}
+
+.material-icons-outlined {
+    vertical-align: middle;
+    line-height: 1px;
+    cursor: pointer;
+}
+
+.text-primary {
+    color: #666666;
+}
+
+.text-blue {
+    color: #246dec;
+}
+
+.text-red {
+    color: #cc3c43;
+}
+
+.text-green {
+    color: #367952;
+}
+
+.text-orange {
+    color: #f5b74f;
+}
+
+.font-weight-bold {
+    font-weight: 600;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 260px 1fr 1fr 1fr;
+    grid-template-rows: 0.2fr 3fr;
+    grid-template-areas:
+        "sidebar header header header"
+        "sidebar main main main";
+    height: 100vh;
+}
+
+
+/* ---------- HEADER ---------- */
+
+.header {
+    grid-area: header;
+    height: 70px;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px 0 30px;
+    box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
+}
+
+.menu-icon {
+    display: none;
+    cursor: pointer;
+}
+
+
+/* ---------- SIDEBAR ---------- */
+
+#sidebar {
+    grid-area: sidebar;
+    height: 100%;
+    background-color: #236476;
+    color: #FFFFFF;
+    overflow-y: auto;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+
+.sidebar-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px 20px 20px;
+    margin-bottom: 30px;
+}
+
+.sidebar-title>span {
+    display: none;
+}
+
+.sidebar-brand {
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.sidebar-list {
+    padding: 0;
+    margin-top: 15px;
+    list-style-type: none;
+}
+
+.sidebar-list-item {
+    padding: 20px 20px 20px 20px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.sidebar-list-item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+
+}
+
+.sidebar-list-item>a {
+    text-decoration: none;
+    color: #9799ab;
+}
+
+
+.sidebar-list-item a {
+    display: flex;
+    align-items: center;
+    /* Center content vertically if needed */
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    /* Optional: Remove underline */
+    color: inherit;
+    /* Optional: Inherit the text color */
+}
+
+.sidebar-list-item.active {
+    background-color: rgba(255, 255, 255, 0.3);
+    /* Lighter background */
+    color: #ffffff;
+    /* White text color */
+}
+
+.sidebar-list-item.active a {
+    color: #ffffff;
+    /* Ensure the link color changes */
+}
+
+.sidebar-responsive {
+    display: inline !important;
+    position: absolute;
+    /*
+    the z-index of the ApexCharts is 11
+    we want the z-index of the sidebar higher so that
+    the charts are not showing over the sidebar 
+    on small screens
+  */
+    z-index: 12 !important;
+}
+
+
+/* ---------- MAIN ---------- */
+
+.main-data-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 10px 2px;
+    gap: 10px;
+
+}
+
+.realtime-container {
+    width: 350px;
+    background-color: #236476;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.head-name {
+    background-color: #236476;
+    color: white;
+    padding: 1px;
+    text-align: center;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.container-all {
+    background-color: white;
+    border-radius: 5px;
+    height: 500px;
+}
+
+.content-realtime {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-around;
+    padding: 50px;
+
+
+}
+
+.data-value {
+    flex-direction: column;
+}
+
+
+/* Style for the icon with light line shining effect */
+.icon i {
+    font-size: 80px;
+    color: #00AFD7;
+    position: relative;
+    overflow: hidden;
+    /* To hide the light line outside the icon */
+}
+
+/* Light line shining effect */
+
+.icon i::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    /* Start from the left outside the icon */
+    width: 100%;
+    height: 100%;
+    /* Cover the full height of the icon */
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.301));
+    /* Light gradient */
+    animation: lightShine 2s infinite linear;
+    /* Animation for the shining line */
+}
+
+/* Animation for the shining line effect */
+@keyframes lightShine {
+    0% {
+        left: -100%;
+        /* Start the line from outside the left side */
+    }
+
+    50% {
+        left: 0%;
+        /* Move the line to cover the icon */
+    }
+
+    100% {
+        left: 100%;
+        /* Move the line to the right side outside the icon */
+    }
+}
+
+#chartdiv {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: -90px 0px;
+}
+
+
+.third-card-info {
+    width: 350px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: space-between;
+}
+
+.date-info {
+    text-align: right;
+    background-color: #142F40;
+    color: #D0DFDA;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.previous-ph {
+    text-align: center;
+    padding: 20px;
+    background-color: #236476;
+    border-radius: 20px;
+    color: #D0DFDA;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.previous-temp {
+    text-align: center;
+    padding: 20px;
+    background-color: #D0DFDA;
+    border-radius: 20px;
+    color: #236476;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.main-container {
+    grid-area: main;
+    overflow-y: auto;
+    padding: 10px 20px;
+}
+
+.main-title {
+    display: flex;
+    justify-content: space-between;
+}
+
+.main-title>p {
+    font-size: 1.5rem;
+    color: #236476;
+}
+
+
+.charts-card {
+    background-color: #ffffff;
+    margin-bottom: 20px;
+    padding: 25px;
+    box-sizing: border-box;
+    -webkit-column-break-inside: avoid;
+    border: 1px solid #d2d2d3;
+    border-radius: 20px;
+    box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
+}
+
+.chart-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+
+/* ---------- SCROLLBARS ---------- */
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px #a5aaad;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #142F40;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #236476;
+}
+
+
+.header-right {
+    position: relative;
+}
+
+.badge {
+
+
+    background-color: red;
+    color: white;
+    padding: 10px 10px;
+    border-radius: 20px;
+    font-size: 15px;
+    position: absolute;
+    top: -15px;
+    right: -20px;
+    display: none;
+    /* -moz-border-radius: 20%; */
+    -ms-border-radius: 20%;
+    -o-border-radius: 20%;
+}
+
+
+
+/* Dropdown notification box */
+.notification-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 25px;
+    width: 500px;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    z-index: 99;
+
+
+}
+
+.notification-dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* .notification-dropdown li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+} */
+
+.notification-dropdown li {
+    padding: 30px 10px;
+    border-bottom: 1px solid #236476;
+    text-align: justify;
+    justify-content: left;
+    /* default, for normal notifications */
+}
+
+.notification-dropdown li:first-child {
+    text-align: justify;
+    /* special styling for "No notifications" */
+    /* color: #f1f1f1; */
+    /* optional to make it look more distinct */
+}
+
+.notification-header {
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-bottom: 1px solid #ddd;
+}
+
+.hidden {
+    display: none;
+}
+
+#notification-list {
+    list-style-type: none;
+    padding: 0;
+    color: black;
+}
+
+/* Highlight unread notifications */
+.unread {
+    background-color: #8DECB4;
+    font-weight: 200;
+    /* Lighter background to indicate unread status */
+}
+
+
+
+
+/* ---------- MEDIA QUERIES ---------- */
+
+
+/* Medium <= 992px */
+@media screen and (max-width: 1120px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: 0.2fr 3fr;
+        grid-template-areas:
+            "header"
+            "main";
+    }
+
+    #sidebar {
+        display: none;
+    }
+
+    .menu-icon {
+        display: inline;
+    }
+
+    .sidebar-title>span {
+        display: inline;
+    }
+
+    .main-data-container {
+        grid-template-columns: 1fr 1fr;
+        /* Two columns for medium screens */
+        gap: 15px;
+    }
+
+    .charts {
+        grid-template-columns: 1fr;
+    }
+
+    .realtime-container {
+        order: 0;
+        width: 100%;
+        /* Ensure full width for all subcomponents */
+        margin-bottom: 15px;
+        /* Add spacing between components */
+    }
+
+    .third-card-info {
+        grid-column: 1 / -1;
+        /* Span across full width */
+        width: 100%;
+        /* Ensure full width for all subcomponents */
+        margin-bottom: 15px;
+        /* Add spacing between components */
+    }
+
+
+}
+
+/* Small <= 768px */
+@media screen and (max-width: 768px) {
+    .main-cards {
+        grid-template-columns: 1fr;
+        /* Stack cards vertically */
+        gap: 10px;
+        margin-bottom: 0;
+    }
+
+    .charts {
+        grid-template-columns: 1fr;
+        margin-top: 30px;
+    }
+
+    .main-data-container {
+        grid-template-columns: 1fr;
+        /* Stack items vertically */
+        gap: 10px;
+    }
+
+    .header {
+        padding: 0 15px;
+    }
+
+    .card {
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card>span {
+        font-size: 18px;
+    }
+
+    .card-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .realtime-container,
+    .third-card-info {
+        width: 100%;
+        /* Ensure containers fit smaller screens */
+    }
+
+    .content-realtime {
+        flex-direction: column;
+        /* Stack content vertically */
+        gap: 10px;
+        /* Space between stacked items */
+    }
+
+    #chartdiv {
+        height: 300px;
+    }
+
+    #current-pH-level, #current-temperature {
+        text-align: center;
+    }
+}
+
+/* Extra Small <= 576px */
+@media screen and (max-width: 576px) {
+    .header-left {
+        display: none;
+    }
+
+    .main-cards {
+        grid-template-columns: 1fr;
+        /* Stack cards vertically */
+        gap: 10px;
+    }
+
+    .charts-card {
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .third-card-info,
+    .realtime-container {
+        width: 100%;
+        /* Full-width for smaller screens */
+        margin-bottom: 10px;
+    }
+
+    .content-realtime {
+        flex-direction: column;
+        /* Stack content vertically */
+        padding: 20px;
+        gap: 10px;
+    }
+
+    .icon i {
+        font-size: 60px;
+        /* Adjust icon size for smaller screens */
+    }
+
+    .main-data-container {
+        grid-template-columns: 1fr;
+        /* Single-column layout */
+        gap: 5px;
+    }
+
+    .container-all {
+
+        height: 450px;
+    }
+
+    #chartdiv {
+        height: 400px;
+    }
+
+}
+
+/* Ultra Small <= 300px */
+@media screen and (max-width: 300px) {
+    .main-data-container {
+        grid-template-columns: 1fr;
+        /* Single-column layout */
+        gap: 5px;
+    }
+
+    .realtime-container,
+    .third-card-info {
+        width: 100%;
+        /* Full-width containers */
+    }
+
+    .content-realtime {
+        flex-direction: column;
+        /* Stack content vertically */
+        gap: 5px;
+    }
+
+    .icon i {
+        font-size: 50px;
+        /* Smaller icon size */
+    }
+
+    #chartdiv {
+        height: 300px;
+    }
+}

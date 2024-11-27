@@ -1,0 +1,399 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Alexandria', sans-serif;
+    /* Adding font for the body */
+}
+
+.headings h1 {
+    font-size: 1.5rem;
+    color: #236476;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: 0.2fr 3fr;
+    grid-template-areas:
+        "sidebar header header header"
+        "sidebar main main main";
+    height: 100vh;
+}
+
+.main-content-holder {
+    grid-area: main;
+    overflow-y: auto;
+    padding: 5px 20px;
+}
+
+
+
+.dataTables_wrapper .dataTables_scroll {
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+}
+
+.search-btns-content {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr;
+}
+
+.search-div {
+    margin-bottom: 10px;
+}
+
+.search-div {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+
+}
+
+.buttons-div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    text-align: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.buttons-div h4 {
+    align-self: center;
+}
+
+#dataTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Add shadow to the table */
+}
+
+#dataTable thead {
+    background-color: #236476;
+    /* Using one of the colors provided */
+    color: #fff;
+    /* White text for contrast */
+}
+
+#dataTable td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+#dataTable th {
+    background-color: #142F40;
+    /* Darker shade for headers */
+    color: #fff;
+    /* White text for contrast */
+    font-weight: bold;
+}
+
+#dataTable tr:hover {
+    background-color: #D0DFDA;
+    /* Light green background on hover */
+}
+
+#dataTable_filter {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    width: 100%;
+}
+
+#dataTable_filter input {
+    width: 100%;
+    /* Full width for the search input */
+    padding: 8px 12px;
+    border: 1px solid #236476;
+    /* Matching the button color */
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+#dataTable_filter input:focus {
+    border-color: #142F40;
+    /* Darker focus color */
+}
+
+#dataTable_filter label {
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.dt-buttons {
+    display: flex;
+    gap: 10px;
+
+}
+
+.dt-buttons .btn {
+    background-color: #236476;
+    /* Primary blue color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    outline: none;
+    /* Remove outline on hover */
+}
+
+.dt-buttons .btn:hover {
+    background-color: #142F40;
+    /* Darker blue on hover */
+}
+
+.dt-buttons .btn:active {
+    background-color: #004494;
+    /* Even darker blue when clicked */
+}
+
+#dataTable_paginate {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+    gap: 10px;
+
+}
+
+#dataTable_paginate span {
+
+    display: flex;
+    gap: 10px;
+}
+
+#dataTable_length, #dataTable_info {
+
+    margin: 10px 0px 10px 0;
+}
+
+/* Styling for Pagination Buttons (Previous / Next) */
+#dataTable_paginate .paginate_button {
+    background-color: #3796b1 !important;
+    /* Ensure pagination buttons have the correct background */
+    color: #000 !important;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    outline: none;
+    /* Remove outline */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#dataTable_paginate .paginate_button:hover {
+    background-color: #61ff06
+        /* Darker color on hover */
+}
+
+#dataTable_paginate .paginate_button:active {
+    background-color: #004494;
+    /* Even darker blue when clicked */
+    color: black;
+}
+
+#dataTable_paginate .paginate_button.previous,
+#dataTable_paginate .paginate_button.next {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#dataTable_paginate .paginate_button.disabled {
+    background-color: #ddd !important;
+    color: #000 !important;
+    cursor: not-allowed;
+    box-shadow: 1px solid gray;
+}
+
+/* Additional styling for sorting buttons in table headers */
+table.dataTable thead .sorting_asc, table.dataTable thead .sorting {
+    background-color: #142F40 !important;
+    color: white !important;
+}
+
+/* Style the dropdown itself */
+.dataTables_length select {
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    background-color: transparent;
+    padding: 5px;
+    width: 80px;
+    cursor: pointer;
+}
+
+/* Add hover effect for the dropdown */
+.dataTables_length select:hover {
+    border-color: #007bff;
+    /* Change border color on hover */
+    background-color: #eef6ff;
+    /* Light blue background on hover */
+}
+
+
+/* ---------- MEDIA QUERIES ---------- */
+
+/* Medium <= 1120px */
+@media screen and (max-width: 1120px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        /* Stack columns */
+        grid-template-areas:
+            "header"
+            "main";
+    }
+
+    .menu-icon {
+        display: inline;
+        /* Show menu icon on smaller screens */
+    }
+
+    .main-content-holder {
+        padding: 10px;
+        /* Add padding for better spacing */
+    }
+
+    /* Adjust DataTable layout */
+    #dataTable {
+        width: 100%;
+    }
+
+    #dataTable_paginate {
+        text-align: center;
+        display: flex;
+        gap: 10px;
+    }
+
+    .search-btns-content {
+        grid-template-columns: 1fr;
+        /* Stack search buttons */
+    }
+
+    .search-div {
+        flex-direction: column;
+        /* Stack search div items */
+    }
+
+    .buttons-div {
+        flex-direction: column;
+        /* Stack buttons vertically */
+        gap: 5px;
+    }
+}
+
+/* Small <= 768px */
+@media screen and (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "header"
+            "main";
+    }
+
+    /* Adjust DataTable pagination for small screens */
+    #dataTable_paginate {
+        font-size: 12px;
+        /* Smaller font size for pagination */
+    }
+
+    .buttons-div {
+        flex-direction: column;
+        /* Stack buttons vertically */
+    }
+
+    .search-btns-content {
+        grid-template-columns: 1fr;
+        /* Stack search buttons */
+    }
+
+    /* Adjust DataTable filtering */
+    #dataTable_filter input {
+        width: 100%;
+        /* Full width for input fields */
+        padding: 6px 8px;
+    }
+}
+
+/* Extra Small <= 576px */
+@media screen and (max-width: 576px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        /* Single-column layout */
+        grid-template-areas:
+            "header"
+            "main";
+    }
+
+    /* Make DataTable full width on small screens */
+    #dataTable {
+        width: 100%;
+    }
+
+    /* Adjust buttons and layout for small devices */
+    .buttons-div {
+        gap: 5px;
+        flex-direction: column;
+    }
+
+    #dataTable_paginate {
+        font-size: 10px;
+        /* Even smaller pagination font size */
+        gap: 5px;
+    }
+
+    .search-btns-content {
+        grid-template-columns: 1fr;
+        /* Stack buttons for small screens */
+    }
+
+    .search-div {
+        flex-direction: column;
+    }
+
+}
+
+/* Ultra Small <= 300px */
+@media screen and (max-width: 300px) {
+
+    /* Stack all elements vertically on ultra-small screens */
+    .grid-container {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "header"
+            "main";
+    }
+
+    #dataTable {
+        width: 100%;
+        /* Full width */
+    }
+
+    .buttons-div {
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    #dataTable_paginate {
+        font-size: 8px;
+        /* Smaller font for pagination */
+        gap: 3px;
+    }
+
+    /* Adjust search and button containers */
+    .search-btns-content {
+        grid-template-columns: 1fr;
+    }
+
+    .search-div {
+        flex-direction: column;
+    }
+}
